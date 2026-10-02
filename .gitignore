@@ -1,1 +1,6 @@
-printf ".env\n.venv/\n__pycache__/\n*.pyc\n" > .gitignore
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/

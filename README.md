@@ -1,0 +1,1 @@
+Develop a secure, production-ready agentic Text-to-SQL chatbot that enables natural-language interaction with PostgreSQL databases using OpenAI LLMs, while incorporating memory, Redis caching, multi-tenant authorization, SQL AST-based guardrails, and observability.
