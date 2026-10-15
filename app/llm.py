@@ -36,8 +36,6 @@ def route(question: str) -> RouterDecision:
         response_format=RouterDecision,
     )
     return response.choices[0].message.parsed
-
-
 SCHEMA = """
 Table customers(id INTEGER, name TEXT, city TEXT, created_at DATE)
 Table orders(id INTEGER, customer_id INTEGER REFERENCES customers.id,
@@ -73,7 +71,6 @@ def generate_sql(question: str) -> SqlProposal:
         response_format=SqlProposal,
     )
     return response.choices[0].message.parsed
-
 
 if __name__ == "__main__":
     print(ask("Say hello in one short sentence."))
