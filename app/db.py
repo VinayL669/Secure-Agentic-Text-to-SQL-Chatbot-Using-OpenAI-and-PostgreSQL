@@ -14,6 +14,14 @@ def run_query(sql: str) -> list[dict]:
         result = connection.execute(text(sql))
         return [dict(row._mapping) for row in result]
 
+READONLY_DATABASE_URL = os.environ["READONLY_DATABASE_URL"]
+readonly_engine = create_engine(READONLY_DATABASE_URL)
+
+
+def run_readonly_query(sql: str) -> list[dict]:
+    with readonly_engine.connect() as connection:
+        result = connection.execute(text(sql))
+        return [dict(row._mapping) for row in result]
 
 if __name__ == "__main__":
     rows = run_query("SELECT name, city FROM customers ORDER BY name")
