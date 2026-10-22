@@ -61,13 +61,22 @@ class SqlProposal(BaseModel):
     tables_used: list[str]
 
 
-def generate_sql(question: str) -> SqlProposal:
+def generate_sql(question: str, history: list[dict] | None = None) -> SqlProposal:
+    messages = [{"role": "system", "content": SQL_SYSTEM_PROMPT}]
+
+    for turn in (history or []):
+        messages.append({"role": "user", "content": turn["question"]})
+        if turn["sql"]:
+            note = f"(generated SQL: {turn['sql']})"
+        else:
+            note = "(no SQL was run for that question)"
+        messages.append({"role": "assistant", "content": note})
+
+    messages.append({"role": "user", "content": question})
+
     response = client.chat.completions.parse(
         model=MODEL,
-        messages=[
-            {"role": "system", "content": SQL_SYSTEM_PROMPT},
-            {"role": "user", "content": question},
-        ],
+        messages=messages,
         response_format=SqlProposal,
     )
     return response.choices[0].message.parsed
