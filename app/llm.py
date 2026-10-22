@@ -72,6 +72,30 @@ def generate_sql(question: str) -> SqlProposal:
     )
     return response.choices[0].message.parsed
 
+RESPONSE_SYSTEM_PROMPT = """You are the final response engine for a data chatbot.
+
+Answer the user's question using ONLY the verified facts provided to you.
+Never invent numbers, rows or statistics that are not in the facts.
+If row_count is 0, clearly say no matching records were found.
+Keep the answer to 2-3 sentences. Do not mention SQL or databases.
+"""
+
+
+def generate_answer(question: str, rows: list[dict], facts: dict) -> str:
+    content = (
+        f"Question: {question}\n"
+        f"Verified facts: {facts}\n"
+        f"Sample rows (max 5 shown): {rows[:5]}"
+    )
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {"role": "system", "content": RESPONSE_SYSTEM_PROMPT},
+            {"role": "user", "content": content},
+        ],
+    )
+    return response.choices[0].message.content
+
 if __name__ == "__main__":
     print(ask("Say hello in one short sentence."))
     print(route("How many customers do we have?"))

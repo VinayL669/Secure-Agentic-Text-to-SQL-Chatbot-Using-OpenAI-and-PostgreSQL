@@ -33,7 +33,12 @@ def validate_sql(sql: str) -> str:
         if word in FORBIDDEN_KEYWORDS:
             raise GuardrailError(f"Forbidden keyword found: '{word}'")
 
-    for table in re.findall(r"\b(?:from|join)\s+([a-z_][a-z0-9_]*)", lowered):
+     # EXTRACT(year FROM created_at) and "IS DISTINCT FROM" use the word FROM
+    # without naming a table, so hide them before looking for table names.
+    for_tables = re.sub(r"extract\s*\(\s*[a-z_]+\s+from\s", "extract(x ", lowered)
+    for_tables = re.sub(r"distinct\s+from\s", "distinct_from ", for_tables)
+
+    for table in re.findall(r"\b(?:from|join)\s+([a-z_][a-z0-9_]*)", for_tables):
         if table not in ALLOWED_TABLES:
             raise GuardrailError(f"Table not allowed: '{table}'")
 
