@@ -9,15 +9,6 @@ from app.memory import get_history, add_turn
 
 app = FastAPI(title="SQL Chatbot")
 
-
-@app.get("/hello/{name}")
-def hello(name: str):
-    return {"message": f"Hello, {name}!"}
-
-@app.get("/db-check")
-def db_check():
-    return run_query("SELECT COUNT(*) AS customers FROM customers")
-
 @app.get("/ask")
 def ask(question: str):
     proposal = generate_sql(question)
